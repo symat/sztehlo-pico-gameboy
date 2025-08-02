@@ -48,30 +48,8 @@ RAMSIZE		// RAM base size in bytes (256 KB or 512 KB)
 // ----------------------------------------------------------------------------
 //                      Device custom configutation
 // ----------------------------------------------------------------------------
-
-#if USE_DEMOVGA			// use DemoVGA device configuration
-#include "_devices/demovga/_config.h"
-#endif
-
-#if USE_PICOTRON		// use Picotron device configuration
-#include "_devices/picotron/_config.h"
-#endif
-
-#if USE_PICOINO			// use Picoino device configuration
-#include "_devices/picoino/_config.h"
-#endif
-
-#if USE_PICOPAD			// use PicoPad device configuration
 #include "_devices/picopad/_config.h"
-#endif
 
-#if USE_PICO			// use Pico device configuration
-#include "_devices/pico/_config.h"
-#endif
-
-#if USE_PC
-#define ASM64		1		// 1 = use assembler x64 optimization, if available
-#endif
 
 #ifndef USE_SCREENSHOT			// use screen shots
 #define USE_SCREENSHOT	0		// use screen shots
@@ -175,11 +153,7 @@ RAMSIZE		// RAM base size in bytes (256 KB or 512 KB)
 #endif
 
 #ifndef USE_GPIOCOPROC
-#if RISCV || RP2040
-#define	USE_GPIOCOPROC	0		// use GPIO coprocessor (only RP2350 ARM; sdk_gpio_coproc.h)
-#else
 #define	USE_GPIOCOPROC	1		// use GPIO coprocessor (only RP2350 ARM; sdk_gpio_coproc.h)
-#endif
 #endif
 
 #ifndef USE_HSTX
@@ -211,11 +185,7 @@ RAMSIZE		// RAM base size in bytes (256 KB or 512 KB)
 #endif
 
 #ifndef USE_PSRAM
-#if RP2040
-#define USE_PSRAM	0		// use PSRAM Memory (sdk_psram.c, sdk_psram.h)
-#else
 #define USE_PSRAM	1		// use PSRAM Memory (sdk_psram.c, sdk_psram.h)
-#endif
 #endif
 
 #ifndef USE_PWM
@@ -805,11 +775,7 @@ RAMSIZE		// RAM base size in bytes (256 KB or 512 KB)
 #define ASM64		0		// 1 = use assembler x64 optimization, if available
 #endif
 
-#if RP2040
-#define BOOTLOADER_SIZE	0x8000		// size of boot loader RP2040
-#else // RP2350
 #define BOOTLOADER_SIZE	0x10000		// size of boot loader RP2350
-#endif
 #define BOOTLOADER_DATA		32	// size of boot loader resident data
 
 #ifndef USB_DEV_CDC_RX_BUFSIZE
@@ -977,11 +943,7 @@ RAMSIZE		// RAM base size in bytes (256 KB or 512 KB)
 #endif
 
 #ifndef ROSC_MHZ
-#if RP2040
-#define ROSC_MHZ	6		// ring oscillator frequency in MHz (default RP2040: 6 MHz)
-#else // RP2350
 #define ROSC_MHZ	11		// ring oscillator frequency in MHz (default RP2350: 11 MHz)
-#endif
 #endif
 
 #ifndef XOSC_MHZ
@@ -989,11 +951,7 @@ RAMSIZE		// RAM base size in bytes (256 KB or 512 KB)
 #endif
 
 #ifndef PLL_KHZ
-#if RP2040
-#define PLL_KHZ		125000		// PLL system frequency in kHz (default 125000 kHz)
-#else // RP2350
 #define PLL_KHZ		150000		// PLL system frequency in kHz (default 150000 kHz)
-#endif
 #endif
 
 #ifndef BATTERY_FULL
@@ -1055,20 +1013,6 @@ RAMSIZE		// RAM base size in bytes (256 KB or 512 KB)
 #define USE_SPINLOCK 1
 #endif
 
-#if USE_MINIVGA
-#undef USE_PIO
-#define USE_PIO 1
-#undef USE_DMA
-#define USE_DMA 1
-#undef USE_IRQ
-#define USE_IRQ 1
-#undef USE_PLL
-#define USE_PLL 1
-#undef USE_MULTICORE
-#define USE_MULTICORE 1
-#undef USE_FIFO
-#define USE_FIFO 1
-#endif
 
 #if USE_SCREENSHOT
 #undef USE_FAT

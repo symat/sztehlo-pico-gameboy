@@ -331,10 +331,10 @@ void DispFileList()
 			// TXT mark
 			if ((fd->attr & ATTR_TXT) != 0)
 			{
-				DispText("TXT");
+				DispText("T");
 			}
 			else
-				DispSpcRep(3);
+				DispSpcRep(1);
 
 			// space
 			DispSpc();
@@ -342,10 +342,10 @@ void DispFileList()
 			// BMP mark
 			if ((fd->attr & ATTR_BMP) != 0)
 			{
-				DispText("BMP");
+				DispText("B");
 			}
 			else
-				DispSpcRep(3);
+				DispSpcRep(1);
 		}
 		else
 			// clear invalid row
@@ -685,7 +685,9 @@ char PrevCharCR()
 // clear preview panel
 void PreviewClr()
 {
-	DrawRect(WIDTH/2, 0, WIDTH/2, HEIGHT, COL_BLACK);
+
+//	DrawRect(WIDTH/2, 0, WIDTH/2, HEIGHT, COL_BLACK);
+	DrawRect(FONTW*FILECOLW, 0, WIDTH-(FONTW*FILECOLW), HEIGHT, COL_BLACK);
 }
 
 // display preview
@@ -1012,7 +1014,7 @@ void Progress(int i, int n, int y, u16 col)
 	VgaWaitVSync();
 
 #define PROGRESS_X 32
-#define PROGRESS_W 256
+#define PROGRESS_W 216
 #define PROGRESS_H 16
 
 	int w = i*PROGRESS_W/n;
@@ -1172,16 +1174,8 @@ void Battery()
 
 	do {
 		// display CPU
-#if RP2040
-		CpuRP2040Text[8] = '0' + RomGetVersion() - 1;
-		DrawText(CpuRP2040Text, (WIDTH-9*8)/2, 0, COL_WHITE);
-#elif RISCV
-		CpuRP2350RISCVText[14] = '0' + RomGetVersion();
-		DrawText(CpuRP2350RISCVText, (WIDTH-15*8)/2, 0, COL_WHITE);
-#else
 		CpuRP2350ARMText[12] = '0' + RomGetVersion();
 		DrawText(CpuRP2350ARMText, (WIDTH-13*8)/2, 0, COL_WHITE);
-#endif
 
 		y = 23;
 
@@ -1189,10 +1183,8 @@ void Battery()
 		DispBattery(y);
 		y += 34 + 20;
 
-#if !USE_PICOINO10 && !USE_PICOTRON
 		DrawText("A=ScreenSaver while Charging:", PROGRESS_X-4, y, COL_WHITE);
 		DrawTextBg(ConfigGetScreenSaver() ? "ON " : "off", PROGRESS_X-4+30*8, y, COL_WHITE, COL_BLACK);
-#endif
 		y += 25;
 
 		// volume
@@ -1215,11 +1207,7 @@ void Battery()
 		DrawText("0   1   2   3   4   5   6   7   8", 26, y, COL_WHITE);
 
 		// help
-#if USE_PICOINO10 || USE_PICOTRON
-		DrawText("Press Z=BOOTSEL, Back=back...", (WIDTH-29*8)/2, HEIGHT-16, COL_WHITE);
-#else
 		DrawText("Press B=BOOTSEL, Y=back...", (WIDTH-26*8)/2, HEIGHT-16, COL_WHITE);
-#endif
 
 		DispUpdate();
 		WaitMs(100);
@@ -1229,11 +1217,9 @@ void Battery()
 		{
 		// ScreenSaver
 		case KEY_A:
-#if !USE_PICOINO10 && !USE_PICOTRON
 			ConfigSetScreenSaver(!ConfigGetScreenSaver());
 			KeyFlush();
 			cfg = True;
-#endif
 			break;
 
 		// BOOTSEL
@@ -1308,7 +1294,6 @@ void RunRAM(int num)
 	GoToAppRam();
 }
 
-#if USE_ST7789		// use ST7789 TFT display (st7789.c, st7789.h)
 // screen saver
 void BootScreenSaver()
 {
@@ -1365,7 +1350,6 @@ void BootScreenSaver()
 		DispBacklightUpdate();
 	}
 }
-#endif
 
 int main()
 {
@@ -1378,9 +1362,7 @@ int main()
 	WATCHDOG_SCRATCH[4] = 0;
 
 	// boot screen saver
-#if USE_ST7789		// use ST7789 TFT display (st7789.c, st7789.h)
 	if (!loader && ConfigGetScreenSaver()) BootScreenSaver();
-#endif
 
 	// clear screen
 	memset(FrameBuf, 0, sizeof(FrameBuf));
@@ -1491,15 +1473,6 @@ int main()
 			{
 			// Down
 			case KEY_DOWN:
-#if USE_DEMOVGA
-				// restart program
-				if (KeyPressed(KEY_UP) && CheckApp(NULL, NULL, NULL))
-				{
-					SaveBootData();
-					RunApp();
-				}
-#endif // USE_DEMOVGA
-
 				if (FileCur < FileNum-1)
 				{
 					// increase cursor
@@ -1553,15 +1526,6 @@ int main()
 
 			// Up
 			case KEY_UP:
-#if USE_DEMOVGA
-				// restart program
-				if (KeyPressed(KEY_DOWN) && CheckApp(NULL, NULL, NULL))
-				{
-					SaveBootData();
-					RunApp();
-				}
-#endif // USE_DEMOVGA
-
 				if (FileCur > 0)
 				{
 					// decrease cursor
@@ -1686,17 +1650,6 @@ int main()
 							else
 							{
 								// check architecture
-#if RP2040
-								if (uf->file_size != RP2040_FAMILY_ID)
-								{
-									DispBigErrMulti(	"",
-												"You are trying to",
-												"run Pico2 program",
-												 "on Pico1 device.",
-												"");
-									FileClose(&PrevFile);
-								}
-#else // RP2040
 								if (uf->file_size == RP2040_FAMILY_ID)
 								{
 									DispBigErrMulti(	"",
@@ -1706,17 +1659,6 @@ int main()
 												"");
 									FileClose(&PrevFile);
 								}
-#if RISCV
-								else if (uf->file_size != RP2350_RISCV_FAMILY_ID)
-								{
-									DispBigErrMulti(	 "You are trying to",
-												"run ARM program, but",
-												 "loader is RISC-V.",
-												"Update to ARM loader",
-												 "from PC using USB.");
-									FileClose(&PrevFile);
-								}
-#else // RISCV
 								else if (uf->file_size == RP2350_RISCV_FAMILY_ID)
 								{
 									DispBigErrMulti(	 "You are trying to",
@@ -1726,8 +1668,8 @@ int main()
 												 "from PC using USB.");
 									FileClose(&PrevFile);
 								}
-#endif // RISCV
-#endif // RP2040
+
+
 
 								// loading into RAM
 								else if (ram)
@@ -1761,9 +1703,6 @@ int main()
 									FileSeek(&PrevFile, j);
 									TempBufNum = FileRead(&PrevFile, TempBuf, 256);
 									m = 256; // offset in TempBuf
-#if RP2040
-									int off = 48*4;	// (192) RP2040: vector table offset
-#else
 									// RP2350: read 2nd sector
 									j += 512;
 									FileSeek(&PrevFile, j);
@@ -1771,28 +1710,11 @@ int main()
 									m += 256; // offset in TempBuf (= 512)
 									int off = 68*4;	// (272) RP2350-ARM: vector table offset
 
-#if RISCV
-									// RP2350-RISCV: read 3rd and 4th sector
-									j += 512;
-									FileSeek(&PrevFile, j);
-									TempBufNum += FileRead(&PrevFile, &TempBuf[m], 256);
-									m += 256; // offset in TempBuf (= 768)
-
-									j += 512;
-									FileSeek(&PrevFile, j);
-									TempBufNum += FileRead(&PrevFile, &TempBuf[m], 256);
-									m += 256; // offset in TempBuf (= 1024)
-
-									off = 192*4; // (0x300 = 768) vector table offset
-#endif // RISCV
-#endif // RP2040
 									u32* h = (u32*)&TempBuf[off];	// pointer to header
 									i = h[1]; 			// application length
 									if ((TempBufNum != m) ||	// check segment length
 										(h[0] != APPINFO_MAGIC) ||	// check magic (= text "PPAD")
-#if !RP2040
 										(h[5] != APPINFO_MAGIC2) ||	// check magic (= text "ppad")
-#endif
 										(i < 10) || (i > FLASHSIZE - 4096 - BOOTLOADER_SIZE - off - 3*4)) // check program length
 									{
 										// error - incompatible program

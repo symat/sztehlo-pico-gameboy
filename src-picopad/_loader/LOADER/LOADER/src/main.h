@@ -49,7 +49,7 @@
 #define MAXFILES	1024	// max files in one directory
 #define NAMELEN		9	// max. length of filename without extension and with terminating 0
 #define FILEROWS	(TEXTH-2) // rows of files (=13)
-#define FILECOLW	20	// width of file panel
+#define FILECOLW	17	// width of file panel
 
 // file entry descriptor (10 bytes)
 //#define ATTR_RO	B0	// Read only
