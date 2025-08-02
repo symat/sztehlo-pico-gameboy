@@ -16,10 +16,7 @@
 
 #include "../../global.h"	// globals
 
-#if USE_PICOPAD
 
-#include "../../_display/minivga/minivga.h"
-#include "../../_display/disphstxmini/disphstxmini.h"
 #include "../../_display/st7789/st7789.h"
 #include "../../_sdk/inc/sdk_timer.h"
 #include "picopad_init.h"	// initialize
@@ -256,4 +253,4 @@ void SmallScreenShot()
 
 #endif // USE_SCREENSHOT || USE_EMUSCREENSHOT	// use screen shots
 
-#endif // USE_PICOPAD
+

@@ -23,7 +23,6 @@
 #include "../inc/lib_draw.h"
 #include "../inc/lib_decnum.h"
 #include "../../_display/st7789/st7789.h"
-#include "../../_display/minivga/minivga.h"
 #include "../../_sdk/usb_inc/sdk_usb_phy.h" // physical layer
 #include "../../_sdk/usb_inc/sdk_usb_dev.h" // devices
 #include "../../_sdk/usb_inc/sdk_usb_dev_cdc.h"

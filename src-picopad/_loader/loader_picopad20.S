@@ -415,7 +415,7 @@
 	.word	0xf4025280
 	.word	0x601a5240
 	.word	0xf0044640
-	.word	0x3001ffd5
+	.word	0x3001ffc5
 	.word	0xf04f2802
 	.word	0xd1e30801
 	.word	0x81f0e8bd
@@ -632,7 +632,7 @@
 	.word	0x19400900
 	.word	0x0300f04f
 	.word	0x0100f148
-	.word	0xfe1af004
+	.word	0xfe1ef004
 	.word	0xf1044374
 	.word	0xf5044480
 	.word	0x68633480
@@ -654,7 +654,7 @@
 	.word	0x60235400
 	.word	0x23004628
 	.word	0xf0044641
-	.word	0x4b12fdef
+	.word	0x4b12fdf3
 	.word	0x0026f843
 	.word	0x83f8e8bd
 	.word	0xe7a4461a
@@ -812,7 +812,7 @@
 	.word	0xa9044668
 	.word	0x3000f88d
 	.word	0xf0044625
-	.word	0x46b3fcaf
+	.word	0x46b3fcb3
 	.word	0xf8df4627
 	.word	0xf10da090
 	.word	0xf8190914
@@ -835,7 +835,7 @@
 	.word	0xf8ad7010
 	.word	0xf88d7001
 	.word	0x97047003
-	.word	0xfc80f004
+	.word	0xfc84f004
 	.word	0x2011f89d
 	.word	0x701a4b09
 	.word	0x2012f89d
@@ -1400,7 +1400,7 @@
 	.word	0xeee03014
 	.word	0xf7ff3010
 	.word	0xf004f869
-	.word	0xe8bdf827
+	.word	0xe8bdf823
 	.word	0xf0004038
 	.word	0xf854bf9d
 	.word	0x47983b04
@@ -1453,7 +1453,7 @@
 	.word	0x00b71b00
 	.word	0x5180f44f
 	.word	0xf0034801
-	.word	0xbf00bfb5
+	.word	0xbf00bfbd
 	.word	0x003ff000
 	.word	0x4358230a
 	.word	0xf3804b02
@@ -1587,7 +1587,7 @@
 	.word	0x7280f44f
 	.word	0xf5004669
 	.word	0xf0035040
-	.word	0xb040fe9d
+	.word	0xb040fea1
 	.word	0xbf00bd70
 	.word	0x20000c74
 	.word	0x103fffe0
@@ -4687,7 +4687,7 @@
 	.word	0x3580f44f
 	.word	0x4070f107
 	.word	0xf0004629
-	.word	0x442ffe71
+	.word	0x442ffe79
 	.word	0xe7d71b76
 	.word	0x10006eb6
 	.word	0x003ef000
@@ -5238,7 +5238,7 @@
 	.word	0xb125fb32
 	.word	0x4650462a
 	.word	0xf0004933
-	.word	0xf1b8fa17
+	.word	0xf1b8fa1b
 	.word	0x44aa0f00
 	.word	0x2500dd04
 	.word	0x3000f8d9
@@ -5260,7 +5260,7 @@
 	.word	0x7280f44f
 	.word	0x491e6020
 	.word	0xf0004650
-	.word	0x2200f9eb
+	.word	0x2200f9ef
 	.word	0x46104611
 	.word	0xf90ef7fd
 	.word	0xf7feb110
@@ -5507,17 +5507,17 @@
 	.word	0x7083788b
 	.word	0x47704660
 	.word	0xf000f85f
+	.word	0x20000001
+	.word	0xf000f85f
 	.word	0x20000135
 	.word	0xf000f85f
 	.word	0x200001b1
 	.word	0xf000f85f
 	.word	0x200003dd
 	.word	0xf000f85f
-	.word	0x20000091
-	.word	0xf000f85f
-	.word	0x20000001
-	.word	0xf000f85f
 	.word	0x2000035d
+	.word	0xf000f85f
+	.word	0x20000091
 	.word	0x05020304
 	.word	0x06070809
 	.word	0x0d0c080b
@@ -7256,10 +7256,10 @@
 	.word	0x41f0e92d
 	.word	0x4604b0c0
 	.word	0xf000460d
-	.word	0x4606fb65
+	.word	0x4606fb69
 	.word	0x22fcb120
 	.word	0xa801491d
-	.word	0xfb62f000
+	.word	0xfb5af000
 	.word	0x8710f3ef
 	.word	0x4b1bb672
 	.word	0x4798681b
@@ -7297,11 +7297,11 @@
 	.word	0x41f0e92d
 	.word	0x4605b0c0
 	.word	0x4617460e
-	.word	0xfb12f000
+	.word	0xfb16f000
 	.word	0xb1204604
 	.word	0x491322fc
 	.word	0xf000a801
-	.word	0xf3effb0f
+	.word	0xf3effb07
 	.word	0xb6728810
 	.word	0x681b4b10
 	.word	0x4b104798
@@ -7328,11 +7328,11 @@
 	.word	0x41f0e92d
 	.word	0x4680b0c0
 	.word	0x4614460d
-	.word	0xfad4f000
+	.word	0xfad8f000
 	.word	0xb1204607
 	.word	0x492322fc
 	.word	0xf000a801
-	.word	0xf3effad1
+	.word	0xf3effac9
 	.word	0xb6728610
 	.word	0x681b4b20
 	.word	0x4b204798
@@ -7392,7 +7392,7 @@
 	.word	0x400d0000
 	.word	0x202f2109
 	.word	0x41f0e92d
-	.word	0xfa50f000
+	.word	0xfa54f000
 	.word	0x8810f3ef
 	.word	0x4d21b672
 	.word	0x682f4b21
@@ -7690,11 +7690,11 @@
 	.word	0xbf004770
 	.word	0x00000000
 	.word	0xf000f85f
+	.word	0x100054f5
+	.word	0xf000f85f
 	.word	0x10000d25
 	.word	0xf000f85f
 	.word	0x10000c3d
-	.word	0xf000f85f
-	.word	0x100054f5
 	.word	0x19160001
 	.word	0x00000002
 	.word	0xffffffff

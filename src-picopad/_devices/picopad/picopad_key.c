@@ -26,7 +26,6 @@
 #include "../../_sdk/usb_inc/sdk_usb_host.h"
 #include "../../_sdk/usb_inc/sdk_usb_host_hid.h"
 #endif // USE_USBPAD
-#include "../../_display/minivga/minivga.h"
 #include "picopad_key.h"
 
 #if !USE_PICOPADVGA

@@ -25,8 +25,6 @@
 #include "../inc/lib_pwmsnd.h"
 #include "../inc/lib_draw.h"
 #include "../../_display/st7789/st7789.h"
-#include "../../_display/minivga/minivga.h"
-#include "../../_display/disphstx/disphstx.h"
 #include "../inc/lib_print.h"
 
 // frame buffer - used both to display and to load 2 video frames
