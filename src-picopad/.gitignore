@@ -1,0 +1,8 @@
+*.o
+*.elf
+*.hex
+*.map
+*.siz
+*.sym
+*.uf2
+err.txt
