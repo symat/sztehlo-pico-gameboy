@@ -66,13 +66,8 @@ int SndBufInx = AUDIO_SAMPBUF;
 // ----------------------------------------------------------------------------
 
 // Cache
-#if USE_PICOPADHSTX		// use PicoPadHSTX device configuration
-ALIGNED FRAMETYPE FrameBuf2[GB_CACHERAM_NUM*GB_CACHE_SIZE/sizeof(FRAMETYPE)]; // RAM cache pages
-#define CacheBuf ((u8*)FrameBuf2)	// RAM cache buffer
-#else
 ALIGNED FRAMETYPE FrameBuf[GB_CACHERAM_NUM*GB_CACHE_SIZE/sizeof(FRAMETYPE)]; // RAM cache pages
 #define CacheBuf ((u8*)FrameBuf)	// RAM cache buffer
-#endif
 
 sGB_Cache GB_CacheDesc[GB_CACHE_NUM];	// cache page descriptors
 u8 GB_CacheROM[GB_ROMCACHEMAX];		// ROM cache pages
@@ -592,7 +587,7 @@ CartLoadRepeat:
 //                              Palettes
 // ----------------------------------------------------------------------------
 
-// convert BGR55 to RGB565
+// convert BGR555 to RGB565
 u16 convertBGR555toRGB565(u16 color)
 {
 	int r = (color & 0x001F) << 11; // red
