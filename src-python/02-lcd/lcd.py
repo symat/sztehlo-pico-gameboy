@@ -31,8 +31,8 @@ WHITE = const(0xFFFF)
 class ST7789(framebuf.FrameBuffer):
     def __init__(
         self,
-        width=240,
-        height=320,
+        width=320,
+        height=240,
         spi=0,
         sck=2,
         mosi=3,
@@ -112,7 +112,7 @@ class ST7789(framebuf.FrameBuffer):
         self.write_reg(0xB0, [0x00, 0b11101000])  # RAMCTRL
         time.sleep_ms(10)
 
-        self.rotation(0)
+        self.rotation(3)
 
         self.write_cmd(0x13)  # Normal display on
         time.sleep_ms(10)

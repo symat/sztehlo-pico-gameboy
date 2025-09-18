@@ -17,8 +17,8 @@ try:
         display.fill(colors[c])
 
         display.text("MicroPython!", 20, 50, text_colors[c])
-        display.fill_rect(80, 110, 50, 30, colors[(c + 1) % 3])
-        display.fill_rect(110, 250, 70, 20, colors[(c + 2) % 3])
+        display.fill_rect(150, 110, 50, 30, colors[(c + 1) % 3])
+        display.fill_rect(210, 170, 70, 20, colors[(c + 2) % 3])
 
         display.show()
         bl_level += 64
