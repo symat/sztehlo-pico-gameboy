@@ -70,27 +70,27 @@
 #endif
 
 #ifndef DISP_BLK_PIN
-#define DISP_BLK_PIN	16		// backlight pin
+#define DISP_BLK_PIN	5		// backlight pin
 #endif
 
 #ifndef DISP_DC_PIN
-#define DISP_DC_PIN	17		// data/command pin
+#define DISP_DC_PIN	4		// data/command pin
 #endif
 
 #ifndef DISP_SCK_PIN
-#define DISP_SCK_PIN	18		// serial clock pin
+#define DISP_SCK_PIN	2		// serial clock pin
 #endif
 
 #ifndef DISP_MOSI_PIN
-#define DISP_MOSI_PIN	19		// master out TX MOSI pin
+#define DISP_MOSI_PIN	3		// master out TX MOSI pin
 #endif
 
 #ifndef DISP_RES_PIN
-#define DISP_RES_PIN	20		// reset pin
+#define DISP_RES_PIN	0		// reset pin
 #endif
 
 #ifndef DISP_CS_PIN
-#define DISP_CS_PIN	21		// chip selection pin
+#define DISP_CS_PIN	1		// chip selection pin
 #endif
 
 #ifndef USE_DRAW_STDIO
@@ -116,7 +116,7 @@
 
 // PWM sound
 #ifndef PWMSND_GPIO
-#define PWMSND_GPIO	15		// PWM output GPIO pin (0..29)
+#define PWMSND_GPIO	14		// PWM output GPIO pin (0..29)
 #endif
 
 #ifndef USE_PWMSND
@@ -175,18 +175,18 @@
 #endif
 
 // buttons GPIO
-#define BTN_UP_PIN	4	// up
-#define BTN_LEFT_PIN	3	// left
-#define BTN_RIGHT_PIN	2	// right
-#define BTN_DOWN_PIN	5	// down
+#define BTN_UP_PIN	27	// up
+#define BTN_LEFT_PIN	26	// left
+#define BTN_RIGHT_PIN	15	// right
+#define BTN_DOWN_PIN	28	// down
 #define BTN_X_PIN	9	// X
 #define BTN_Y_PIN	8	// Y
 #define BTN_A_PIN	7	// A
 #define BTN_B_PIN	6	// B
 
 // LEDs
-#define LED1_PIN	22	// LED1 inverted, blue, on right
-#define LED2_PIN 	25	// default internal LED pin, on Pico board
+#define LED1_PIN	16	// LED1 inverted, blue, on right
+#define LED2_PIN 	16	// default internal LED pin, on Pico board
 
 // SD card speed
 #ifndef SD_BAUDLOW

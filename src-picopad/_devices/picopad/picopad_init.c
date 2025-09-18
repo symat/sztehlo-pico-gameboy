@@ -86,9 +86,9 @@ void DeviceInit()
 
 	// TODO: touch screen init (only disable the CS line for now)
 	// TOUCH_CS is GPIO 14
-	GPIO_Init(14);
-	GPIO_DirOut(14);
-	GPIO_Out1(14);  
+	//GPIO_Init(14);
+	//GPIO_DirOut(14);
+	//GPIO_Out1(14);  
 }
 
 // Device terminate
