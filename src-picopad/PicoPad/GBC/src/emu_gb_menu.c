@@ -100,7 +100,7 @@ Bool GB_Save(int inx)
 		if (!SetDir(HomePath))
 		{
 			if (repeat) goto GBSaveRepeat;
-			msg = "Invalid directory";
+			msg = "Invalid folder";
 			goto SaveError;
 		}
 
@@ -120,7 +120,7 @@ Bool GB_Save(int inx)
 		if (!res)
 		{
 			if (repeat) goto GBSaveRepeat;
-			msg = "Cannot create file";
+			msg = "Cant create file";
 			goto SaveError;
 		}
 
@@ -134,7 +134,7 @@ Bool GB_Save(int inx)
 
 		// write error
 		if (repeat) goto GBSaveRepeat;
-		msg = "Cannot write file";
+		msg = "Cant write file";
 
 		// display error
 SaveError: 	GB_TextClear();
@@ -155,7 +155,7 @@ SaveError: 	GB_TextClear();
 
 		GB_TextY = 3;
 		GB_TextSetCol(COL_WHITE);
-		GB_TextPrintCenter("A=repeat, Y=break");
+		GB_TextPrintCenter("A=repeat,Y=break");
 
 		GB_TextSetCol(COL_GRAY);
 		GB_TextY = 7;
@@ -222,7 +222,7 @@ Bool GB_Load(int inx)
 		if (!SetDir(HomePath))
 		{
 			if (repeat) goto GBLoadRepeat;
-			msg = "Invalid directory";
+			msg = "Invalid folder";
 			goto LoadError;
 		}
 
@@ -255,7 +255,7 @@ Bool GB_Load(int inx)
 			msg = "Cannot read file";
 			if (n > 4)
 			{
-				if (gbContext.savestart != GB_SAVEFILE_VER) msg = "Incorrect version";
+				if (gbContext.savestart != GB_SAVEFILE_VER) msg = "Bad version";
 				GB_Setup(); // reinitialize
 			}
 			goto LoadError;
@@ -266,7 +266,7 @@ Bool GB_Load(int inx)
 		{
 			if (repeat) goto GBLoadRepeat;
 			GB_Setup(); // reinitialize
-			msg = "Incorrect version";
+			msg = "Bad version";
 			goto LoadError;
 		}
 
@@ -302,7 +302,7 @@ LoadError: 	GB_TextClear();
 
 		GB_TextY = 3;
 		GB_TextSetCol(COL_WHITE);
-		GB_TextPrintCenter("A=repeat, Y=break");
+		GB_TextPrintCenter("A=repeat,Y=break");
 
 		GB_TextSetCol(COL_GRAY);
 		GB_TextY = 7;
@@ -406,11 +406,18 @@ void GB_MenuDraw()
 	// set menu color
 	GB_TextSetCol(COL_YELLOW);
 
+	// 3) X ... exit
+	GB_TextPrint("   X..exit\n\r");
+
+	// 4) Y ... continue
+	GB_TextPrint("   Y..continue\n\r");
+
+
 	// 1) A .. screenshot
-	GB_TextPrint("A ... screenshot(+B)\n\r");
+	GB_TextPrint("   A..scr.shot(+B)\n\r");
 
 	// 2) B ... sound off
-	GB_TextPrint("B ... volume ");
+	GB_TextPrint("   B..volume ");
 	int vol = (NewVol + 5) / 10 * 10;
 	if (vol > 100) vol = 100;
 	int n = DecNum(DecNumBuf, vol, 0);
@@ -418,21 +425,16 @@ void GB_MenuDraw()
 	DecNumBuf[n+1] = 0;
 	GB_TextPrint(DecNumBuf);
 
-	// 3) X ... exit
-	GB_TextPrint("\n\rX ... exit\n\r");
-
-	// 4) Y ... continue
-	GB_TextPrint("Y ... continue\n\r");
 
 	// set slots color
 	GB_TextSetCol(COL_GREEN);
 
 	// 5) Le/Ri slot: 0
-	GB_TextPrint("Up/Dn slot: ");
+	GB_TextPrint("\n\r  Up/Dn slot: ");
 	GB_TextPrintCh(GB_MenuSlot+'0');
 
 	// 6) Up/Dn load/save
-	GB_TextPrint("\n\rLe/Ri load/save");
+	GB_TextPrint("\n\r  Le/Ri load/save");
 
 	// 7)
 	GB_TextY++;
@@ -441,9 +443,9 @@ void GB_MenuDraw()
 	GB_TextSetCol(COL_LTGRAY);
 
 	// 8) DEV=GBC MBC=1 PAL=23
-	GB_TextPrint("\n\rDEV=");
+	GB_TextPrint("  DE=");
 	GB_TextPrint(gbContext.cgb.cgbMode ? "GBC" : "DMG");
-	GB_TextPrint(" MBC=");
+	GB_TextPrint(" M=");
 	GB_TextPrintCh(gbContext.mbc + '0');
 
 #if DEB_WRITECRAM	// 1=debug display write bytes into CRAM (in game menu)
@@ -456,12 +458,13 @@ void GB_MenuDraw()
 	GB_TextPrint(DecNumBuf);
 
 	// 9) f=4194304Hz @ 252MHz
-	GB_TextPrint("\n\rf=");
+	GB_TextPrint("\n\r  f=");
 	int f = 4194304;
 	if (gbContext.cgb.doubleSpeed) f *= 2;
+	f /= 1000;
 	DecNum(DecNumBuf, f, 0);
 	GB_TextPrint(DecNumBuf);
-	GB_TextPrint("Hz @ ");
+	GB_TextPrint("MHz@");
 	DecNum(DecNumBuf, (ClockGetHz(CLK_SYS)+500000)/1000000, 0);
 	GB_TextPrint(DecNumBuf);
 	GB_TextPrint("MHz\n\r");
@@ -469,6 +472,7 @@ void GB_MenuDraw()
 	// 10) GAMENAME_11 CRC=2A23
 	GB_TextSetCol(COL_AZURE);
 	int i;
+	GB_TextPrint("  ");
 	for (i = 0x134; i < 0x13F; i++)
 	{
 		char ch = gameRom[i];
@@ -478,7 +482,7 @@ void GB_MenuDraw()
 			break;
 	}
 	GB_TextX = 12;
-	GB_TextPrint("CRC=");
+	GB_TextPrint("C=");
 	DecHexNum(DecNumBuf, TitleCrc, 4);
 	GB_TextPrint(DecNumBuf);
 	GB_TextPrint("\n\r");
@@ -487,7 +491,8 @@ void GB_MenuDraw()
 	GB_TextSetCol(COL_MAGENTA);
 	GB_PrepSaveFile(GB_MenuSlot); // prepare save filename (0..9, -1=default)
 	i = 0;
-	if (SaveNameLen > GB_MSG_WIDTH) i = SaveNameLen - GB_MSG_WIDTH;
+	if (SaveNameLen > GB_MSG_WIDTH - 4) i = SaveNameLen - GB_MSG_WIDTH + 4;
+	GB_TextPrint("  ");
 	GB_TextPrint(&HomePath[i]);
 	GB_UnprepSaveFile(); // unprepare save filename
 }

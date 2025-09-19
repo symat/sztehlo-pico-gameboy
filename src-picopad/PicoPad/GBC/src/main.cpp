@@ -747,9 +747,10 @@ void gbErrorHandler(struct gb_s *gb, const enum gb_error_e gb_err, const u16 add
 // draw one line from frame buffer
 void FASTCODE NOFLASH(core1DrawFrame)()
 {
-	int x, y, ys, ys2, rinx;
+	int x, y, rinx;
 	u16* s;
 	u16 c;
+	u16 black = 0;
 
 #if DEB_FPS			// debug display FPS
 	u16 buf[16*16];
@@ -795,7 +796,6 @@ void FASTCODE NOFLASH(core1DrawFrame)()
 	// start sending image data
 	DispStartImg(0, WIDTH, y, HEIGHT);
 
-	ys2 = y*LCD_HEIGHT/HEIGHT;
 
 	for (; y < HEIGHT;)
 	{
@@ -811,7 +811,6 @@ void FASTCODE NOFLASH(core1DrawFrame)()
 		}
 
 		// source address
-		ys = ys2;
 		s = &gbContext.framebuf[rinx*LCD_WIDTH];
 
 #if DEB_FPS			// debug display FPS
@@ -835,20 +834,26 @@ void FASTCODE NOFLASH(core1DrawFrame)()
 		}
 		else
 #endif
-		for (x = LCD_WIDTH; x > 0; x--)
-		{
-			c = *s++;
-			DispSendImg2(c);
-			DispSendImg2(c);
+		if(y>=12 && y<228) {
+			for(x = 40; x>0; x--) DispSendImg2(black);
+			for (x = LCD_WIDTH; x > 0; x--)
+			{
+				c = *s++;
+				DispSendImg2(c);
+				if(x%2) DispSendImg2(c);
+			}
+			for(x = 40; x>0; x--) DispSendImg2(black);
+		} else {
+			for(x = 320; x>0; x--) DispSendImg2(black);
 		}
+
 
 		// next source Y
 		// Check case: y = 239, old ys = 239*144/240 = 143, new ys2 = 240*144/240 = 144, it is OK
 		y++;
-		ys2 = y*LCD_HEIGHT/HEIGHT;
 
 		// update read index - only if we will not need this scan line again
-		if (ys != ys2)
+		if(y>=12 && y<228 && y%3!=0) 
 		{
 			dmb();
 
