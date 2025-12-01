@@ -1,7 +1,7 @@
 from machine import Pin, PWM
 import time
 
-sound_pwm = PWM(Pin(14), freq=262, duty_u16=0)
+sound_pwm = PWM(Pin(0), freq=262, duty_u16=0)
 sound_volume = 100   # 100 is low, 10.000 normal, 32.000 max
 
 print("Beeping a C note...")

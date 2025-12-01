@@ -41,8 +41,7 @@ class ST7789(framebuf.FrameBuffer):
         bl=15,
         reset=26,
         init_color=0x0,
-        bl_level=128,
-        rotation_mode = 3
+        bl_level=128
     ):
         self.spi = None  # init the spi variable so that we can deinit even if SPI constructor fails
         machine.freq(
@@ -59,7 +58,6 @@ class ST7789(framebuf.FrameBuffer):
         #                   to reduce interference to the audio output)
         self.bl_pwm = PWM(Pin(bl), freq=22050, duty_u16=bl_level * 256)
 
-        self.rotation_mode = rotation_mode
         self.bl_level = bl_level
         self.cs = Pin(cs, Pin.OUT)
         self.dc = Pin(dc, Pin.OUT)
@@ -114,7 +112,7 @@ class ST7789(framebuf.FrameBuffer):
         self.write_reg(0xB0, [0x00, 0b11101000])  # RAMCTRL
         time.sleep_ms(10)
 
-        self.rotation(self.rotation_mode)
+        self.rotation(3)
 
         self.write_cmd(0x13)  # Normal display on
         time.sleep_ms(10)
@@ -158,7 +156,7 @@ class ST7789(framebuf.FrameBuffer):
             self.write_reg(0x36, 0x00)
         elif mode == 1:
             self.write_reg(0x36, 0x60)
-        elif mode == 2:
+        elif mode == 1:
             self.write_reg(0x36, 0xC0)
         else:
             self.write_reg(0x36, 0xA0)

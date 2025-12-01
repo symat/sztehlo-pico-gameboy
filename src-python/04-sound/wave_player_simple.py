@@ -24,7 +24,7 @@ sound_volumne_scale = 256  # the 0..255 sound sample will be multiplied with the
                            # (max scale is 128, as it wil be resulting 32768 duty cycle)
 
 try:
-    sound_pwm = PWM(Pin(14), freq=32_000, duty_u16=0)
+    sound_pwm = PWM(Pin(0), freq=32_000, duty_u16=0)
 
     f = wave.open(fileName, "rb")
     rate = f.getframerate()

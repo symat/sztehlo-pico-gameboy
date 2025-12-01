@@ -7,8 +7,8 @@ import time
 from machine import Pin
 
 display = None
-pin_a = Pin(7, Pin.IN, Pin.PULL_UP)
-pin_b = Pin(6, Pin.IN, Pin.PULL_UP)
+pin_a = Pin(28, Pin.IN, Pin.PULL_UP)
+pin_b = Pin(27, Pin.IN, Pin.PULL_UP)
 
 last_button_event = time.ticks_ms()
 
