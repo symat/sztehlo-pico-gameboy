@@ -5,7 +5,6 @@
 # - standard python 'open' function for reading / writing files
 #   (https://realpython.com/read-write-files-python/)
 
-
 import time
 import neopixel
 from machine import SPI, Pin
@@ -21,14 +20,6 @@ MISO_PIN = 4    # later, running  on the gameboy: 12
 CS_PIN = 1      # later, running  on the gameboy: 13
 SD_MOUNT_PATH = '/sd'
 
-
-SPI_BUS = 1
-SCK_PIN = 10
-MOSI_PIN = 11
-MISO_PIN = 12
-CS_PIN = 13
-
-
 def color_and_sleep(r, g, b, wait_time):
     pixel[0] = (r, g, b)
     pixel.write()
@@ -43,11 +34,8 @@ def list_files_recursive(path='.', level=0):
         else:
             print('   ' * level, full_path, f"(size: {size} bytes)")
 
-
 pixel = neopixel.NeoPixel(Pin(16), 1)
-
-# init: blue color
-color_and_sleep(0, 0, 100, 0.5)
+color_and_sleep(0, 0, 100, 0.5)   # init: blue color
 
 try:
     spi = SPI(SPI_BUS, 1_000_000, sck=Pin(SCK_PIN), mosi=Pin(MOSI_PIN), 
@@ -81,12 +69,9 @@ try:
 
     print("listing all the files on the sdcard:")
     list_files_recursive("/sd")
-
         
 except Exception as e:
     print("Error:", e)
-    color_and_sleep(100, 0, 0, 2)
+    color_and_sleep(100, 0, 0, 2) # error, red LED for 2sec
     
-
-
-color_and_sleep(0, 0, 0, 0.1)
+color_and_sleep(0, 0, 0, 0.1) # turn off LED
