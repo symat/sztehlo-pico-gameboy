@@ -57,6 +57,8 @@ const char KeyMapToChar[KEY_NUM+1] = {
 // time of last press/release
 u16 KeyLastPress[KEY_NUM];
 u16 KeyLastRelease[KEY_NUM];
+u16 KeyXLastTimeNotPressed = 0;
+u16 KeyArrowLastTimePressed = 0;
 
 // keys are currently pressed (index = button code - 1)
 volatile Bool KeyPressMap[KEY_NUM];
@@ -123,17 +125,29 @@ void KeyScan()
 {
 	int i;
 	u16 t = TimeMs(); // time in [ms]
+
+
+
 	for (i = 0; i < KEY_NUM; i++)
 	{
 		// check if button is pressed
 		if (GPIO_In(KeyGpioTab[i]) == 0)
 		{
+			if (i==KEY_UP-1 || i==KEY_DOWN-1 || i==KEY_LEFT-1 || i==KEY_RIGHT-1) {
+				KeyArrowLastTimePressed = t;
+			}
+
 			// button is pressed for the first time
 			if (!KeyPressMap[i])
 			{
-				KeyLastPress[i] = t + (KEY_REP_TIME1 - KEY_REP_TIME2);
-				KeyPressMap[i] = True;
-				KeyWriteKey(i+1);
+				if (i != KEY_X-1 || (t > KeyArrowLastTimePressed + 300 && t > KeyXLastTimeNotPressed + 300)) {
+					// for the X key (which is in the middle button on the 5-way joystick)
+					// we enable the button only if some time passed since the arrows were pressed
+					// and we are pressing the X buttons for a while
+					KeyLastPress[i] = t + (KEY_REP_TIME1 - KEY_REP_TIME2);
+					KeyPressMap[i] = True;
+					KeyWriteKey(i+1);
+				}
 			}
 
 			// button is already pressed - check repeat interval
@@ -151,6 +165,9 @@ void KeyScan()
 		// button is release - check stop of press
 		else
 		{
+			if (i==KEY_X-1) {
+				KeyXLastTimeNotPressed = t;
+			}
 			if (KeyPressMap[i])
 			{
 				if ((s16)(t - KeyLastRelease[i]) >= (s16)KEY_REL_TIME)

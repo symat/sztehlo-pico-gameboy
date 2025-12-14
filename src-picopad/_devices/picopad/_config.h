@@ -70,11 +70,11 @@
 #endif
 
 #ifndef DISP_BLK_PIN
-#define DISP_BLK_PIN	5		// backlight pin
+#define DISP_BLK_PIN	15		// backlight pin
 #endif
 
 #ifndef DISP_DC_PIN
-#define DISP_DC_PIN	4		// data/command pin
+#define DISP_DC_PIN	14		// data/command pin
 #endif
 
 #ifndef DISP_SCK_PIN
@@ -86,7 +86,7 @@
 #endif
 
 #ifndef DISP_RES_PIN
-#define DISP_RES_PIN	0		// reset pin
+#define DISP_RES_PIN	26		// reset pin
 #endif
 
 #ifndef DISP_CS_PIN
@@ -116,7 +116,7 @@
 
 // PWM sound
 #ifndef PWMSND_GPIO
-#define PWMSND_GPIO	14		// PWM output GPIO pin (0..29)
+#define PWMSND_GPIO	0		// PWM output GPIO pin (0..29)
 #endif
 
 #ifndef USE_PWMSND
@@ -154,9 +154,6 @@
 //                          PicoPad10 and PicoPad20
 // ============================================================================
 
-// ======== PicoPad version 1.0 and 2.0
-#if USE_PICOPAD10 || USE_PICOPAD20
-
 // SD card
 #ifndef SD_RX
 #define SD_RX		12		// SD card RX (MISO input), to DATA_OUT pin 7
@@ -175,14 +172,14 @@
 #endif
 
 // buttons GPIO
-#define BTN_UP_PIN	27	// up
-#define BTN_LEFT_PIN	26	// left
-#define BTN_RIGHT_PIN	15	// right
-#define BTN_DOWN_PIN	28	// down
+#define BTN_UP_PIN	6	// up
+#define BTN_LEFT_PIN	4	// left
+#define BTN_RIGHT_PIN	5	// right
+#define BTN_DOWN_PIN	7	// down
 #define BTN_X_PIN	9	// X
 #define BTN_Y_PIN	8	// Y
-#define BTN_A_PIN	7	// A
-#define BTN_B_PIN	6	// B
+#define BTN_A_PIN	28	// A
+#define BTN_B_PIN	27	// B
 
 // LEDs
 #define LED1_PIN	16	// LED1 inverted, blue, on right
@@ -204,6 +201,6 @@
 #endif
 
 
-#endif // USE_PICOPAD10 || USE_PICOPAD20
+
 
 
