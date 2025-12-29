@@ -1,7 +1,9 @@
 ^YKeyPad Test^0
 
-^WHold Y^0 .... quit
+^WHold X^0 .... quit
 
 Support USB keyboard:
-A->Ctrl, B->Alt, X->Shift,
+A->Ctrl
+B->Alt
+X->Shift
 Y->Esc

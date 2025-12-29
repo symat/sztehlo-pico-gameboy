@@ -19,8 +19,10 @@
 // display mode
 volatile u8 GB_DispMode;		// display mode GB_DISPMODE_*
 
-Bool DoEmuScreenShotReq = False; // request to do screenshot
-Bool DoLockedScreenShot = False; // use locked screenshot - game not moving (press B and add A)
+#if USE_SCREENSHOT		// use screen shots
+volatile Bool screenShotReq = False;
+volatile Bool screenShotInProgress = False;
+#endif
 
 // length of save filename
 int SaveNameLen;
@@ -506,98 +508,12 @@ Bool GB_Menu()
 	// flush keys
 	WaitMs(300);
 	KeyFlush();
-#if USE_USB_HOST_HID
-	UsbFlushKey();
-#endif
 
 	// draw emulator menu
 	GB_MenuDraw();
 
 	while (True)
 	{
-#if USE_USB_HOST_HID
-		// get USB key
-		u32 k = UsbGetKey();
-		u8 ch = (u8)(k & 0xff);
-
-		// quit
-		switch (ch)
-		{
-		// screenshot
-		case HID_KEY_A:
-#if USE_EMUSCREENSHOT		// use emulator screen shots
-			DoLockedScreenShot = UsbKeyIsPressed(HID_KEY_B); // use locked screenshot - game not moving (press B and add A)
-			DoEmuScreenShotReq = True;	// request to do emulator screenshot
-			while (UsbKeyIsPressed(HID_KEY_A) || UsbKeyIsPressed(HID_KEY_B)) {}
-#endif
-			GB_MenuLeave();
-			return True;
-
-		// sound
-		case HID_KEY_B:
-			NewVol = ((NewVol + 5)/10 + 1)*10;
-			if (NewVol > 105) NewVol = 0;
-			GB_MenuDraw();
-			break;
-
-		// continue
-		case HID_KEY_ESCAPE:
-		case HID_KEY_BACKSPACE:
-		case HID_KEY_Y:
-			while (UsbKeyIsPressed(HID_KEY_ESCAPE) ||
-				UsbKeyIsPressed(HID_KEY_BACKSPACE) ||
-				UsbKeyIsPressed(HID_KEY_Y)) {}
-			GB_MenuLeave();
-			return True;
-
-		// exit
-		case HID_KEY_ENTER:
-		case HID_KEY_KEYPAD_ENTER:
-		case HID_KEY_X:
-			GB_MenuLeave();
-			return False;
-
-		// down
-		case HID_KEY_ARROW_DOWN:
-			if (GB_MenuSlot == 0)
-				GB_MenuSlot = GB_MENU_SLOTNUM-1;
-			else
-				GB_MenuSlot--;
-			GB_MenuDraw();
-			break;
-
-		// up
-		case HID_KEY_ARROW_UP:
-			if (GB_MenuSlot == GB_MENU_SLOTNUM-1)
-				GB_MenuSlot = 0;
-			else
-				GB_MenuSlot++;
-			GB_MenuDraw();
-			break;
-
-		// right
-		case HID_KEY_ARROW_RIGHT:
-			if (GB_Save(GB_MenuSlot))
-			{
-				while (UsbKeyIsPressed(HID_KEY_ARROW_LEFT)) {}
-				GB_MenuLeave();
-				return True;
-			}
-			GB_MenuDraw();
-			break;
-
-		// left
-		case HID_KEY_ARROW_LEFT:
-			if (GB_Load(GB_MenuSlot))
-			{
-				while (UsbKeyIsPressed(HID_KEY_ARROW_LEFT)) {}
-				GB_MenuLeave();
-				return True;
-			}
-			GB_MenuDraw();
-			break;
-		}
-#endif
 
 		// keypad
 		switch (KeyGet())
@@ -608,6 +524,10 @@ Bool GB_Menu()
 			DoLockedScreenShot = KeyPressed(KEY_B); // use locked screenshot - game not moving (press B and add A)
 			DoEmuScreenShotReq = True;	// request to do emulator screenshot
 			while (KeyPressed(KEY_A) || KeyPressed(KEY_B)) {}
+#endif
+#if USE_SCREENSHOT		// use screen shots
+			screenShotReq = True;
+			screenShotInProgress = False;
 #endif
 			GB_MenuLeave();
 			return True;
@@ -627,9 +547,6 @@ Bool GB_Menu()
 
 		// exit
 		case KEY_X:
-#if USE_SCREENSHOT		// use screen shots
-			ScreenShot();
-#endif
 			GB_MenuLeave();
 			return False;
 

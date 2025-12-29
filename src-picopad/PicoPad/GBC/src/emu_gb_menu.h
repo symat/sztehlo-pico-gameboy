@@ -24,6 +24,12 @@ extern volatile u8 GB_DispMode;		// display mode GB_DISPMODE_*
 extern Bool DoEmuScreenShotReq; // request to do screenshot
 extern Bool DoLockedScreenShot; // use locked screenshot - game not moving (press B and add A)
 
+#if USE_SCREENSHOT		// use screen shots
+extern volatile Bool screenShotReq;
+extern volatile Bool screenShotInProgress;
+#endif
+
+
 // length of save filename
 extern int SaveNameLen;
 

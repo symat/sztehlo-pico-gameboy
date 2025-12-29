@@ -82,6 +82,9 @@ if errorlevel 1 goto err
 rem Copy UF2 file to destination folder with image of SD card
 if not exist %~dp0%DEVDIR%\%GRPDIR%\*.UF2 md %~dp0%DEVDIR%\%GRPDIR%
 copy /b %TARGET%.uf2 %~dp0%DEVDIR%\%GRPDIR%\%TARGET%.UF2 > nul
+if exist %TARGET%.txt copy /b %TARGET%.txt %~dp0%DEVDIR%\%GRPDIR%\%TARGET%.TXT > nul
+if exist %TARGET%.bmp copy /b %TARGET%.bmp %~dp0%DEVDIR%\%GRPDIR%\%TARGET%.BMP > nul
+if exist %TARGET%.png copy /b %TARGET%.png %~dp0%DEVDIR%\%GRPDIR%\%TARGET%.PNG > nul
 goto end
 
 :err

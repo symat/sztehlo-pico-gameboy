@@ -27,19 +27,23 @@
 #define DISP_ROT	3		// display rotation of LCD: 0 Portrait, 1 Landscape, 2 Inverted Portrait, 3 Inverted Landscape
 #endif
 
-#ifndef WIDTH
+#ifndef WIDTH  
 #if (DISP_ROT == 0) || (DISP_ROT == 2)
-#define WIDTH		240		// display width
+#define WIDTH		        240		// display framebuffer width
+#define SCREEN_WIDTH		240		// display physical pixels width
 #else
-#define WIDTH		320		// display width
+#define WIDTH		        320		// display framebuffer width
+#define SCREEN_WIDTH		280		// display physical pixels width
 #endif
 #endif
 
 #ifndef HEIGHT
 #if (DISP_ROT == 0) || (DISP_ROT == 2)
-#define HEIGHT		320		// display height
+#define HEIGHT       		320		// display framebuffer height
+#define SCREEN_HEIGHT		280		// display physical pixels height
 #else
-#define HEIGHT		240		// display height
+#define HEIGHT		        240		// display framebuffer height
+#define SCREEN_HEIGHT		240		// display physical pixels height
 #endif
 #endif
 

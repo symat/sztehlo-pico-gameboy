@@ -62,6 +62,9 @@ sFileDesc* PrevFD; // preview file descriptor
 int PrevLine; // current preview line
 sFile PrevFile; // preview file (name[0] = 0 if not open)
 int PrevW, PrevH; // size of preview image
+int PrevRow;  // which row we are processing from the preview bitmap
+u8 reversed; // true, if the lines of the BMP file are sotred in reverse order
+int current_fb_line; // which FB line is used for displaying the current row from the preview BMP file 
 
 // set home position
 void DispHome()
@@ -81,7 +84,7 @@ void DispCol(COLTYPE fgcol, COLTYPE bgcol)
 void DispText(const char* text)
 {
 	SelFont8x16();
-	DrawTextBg(text, DispX*FONTW, DispY*FONTH, FgCol, BgCol);
+	DrawTextBg(text, (DispX*FONTW)+WIDTH_OFFSET, DispY*FONTH, FgCol, BgCol);
 	DispX += StrLen(text);
 }
 
@@ -89,7 +92,7 @@ void DispText(const char* text)
 void DispSmallText(const char* text)
 {
 	SelFont6x8();
-	DrawTextBg(text, DispX*FONTW2, DispY*FONTH2, FgCol, BgCol);
+	DrawTextBg(text, (DispX*FONTW2)+TXT_OFFSET, DispY*FONTH2, FgCol, BgCol);
 	DispX += StrLen(text);
 }
 
@@ -331,10 +334,10 @@ void DispFileList()
 			// TXT mark
 			if ((fd->attr & ATTR_TXT) != 0)
 			{
-				DispText("TXT");
+				DispText("T");
 			}
 			else
-				DispSpcRep(3);
+				DispSpcRep(1);
 
 			// space
 			DispSpc();
@@ -342,10 +345,10 @@ void DispFileList()
 			// BMP mark
 			if ((fd->attr & ATTR_BMP) != 0)
 			{
-				DispText("BMP");
+				DispText("B");
 			}
 			else
-				DispSpcRep(3);
+				DispSpcRep(1);
 		}
 		else
 			// clear invalid row
@@ -685,7 +688,7 @@ char PrevCharCR()
 // clear preview panel
 void PreviewClr()
 {
-	DrawRect(WIDTH/2, 0, WIDTH/2, HEIGHT, COL_BLACK);
+	DrawRect(RIGHT_PANEL_WIDTH_OFFSET, 0, WIDTH-RIGHT_PANEL_WIDTH_OFFSET, HEIGHT, COL_BLACK);
 }
 
 // display preview
@@ -767,11 +770,11 @@ void Preview()
 		inv = 0;
 
 		// set coordinates
-		DispX = (TEXTW2+1)/2;
+		DispX = 0;
 		DispY = PrevLine;
 
 		// decode one row (i = relative character position)
-		for (i = 0; i < TEXTW2/2;)
+		for (i = 0; i < TEXTW2;)
 		{
 			// load next character, skip CR characters
 			ch = PrevCharCR();
@@ -785,7 +788,7 @@ void Preview()
 				do {
 					DispSmallChar(' ' ^ inv);
 					i++; // increase character position
-				} while ((i < TEXTW2/2) && ((i & 7) != 0));
+				} while ((i < TEXTW2) && ((i & 7) != 0));
 			}
 			else
 			{
@@ -858,7 +861,7 @@ void Preview()
 		}
 
 		// skip rest of the row
-		if (i == TEXTW2/2)
+		if (i == TEXTW2)
 		{
 			// find LF end of line or NUL end of file
 			do {
@@ -914,7 +917,11 @@ void Preview()
 		bmp = (sBmp*)TempBuf;
 		PrevW = (bmp->biWidth + 1) & ~1; // width aligned to DWORD
 		PrevH = bmp->biHeight;
-		if (PrevH < 0) PrevH = -PrevH; // negative height -> flip row order
+		reversed = 1;
+		if (PrevH < 0) {
+			PrevH = -PrevH; // negative height -> flip row order
+			reversed = 0; // negative height means that we start with the top row
+		}
 
 		// check bitmap header
 		if ((i != sizeof(sBmp)) ||
@@ -939,6 +946,7 @@ void Preview()
 
 		// prepare first video line
 		PrevLine = ((PrevFD->attr & ATTR_TXT) == 0) ? 0 : (HEIGHT/2);
+		PrevRow = 0;
 
 		// loading bitmap file
 		PrevState = PREV_BMP_LOAD;
@@ -948,28 +956,27 @@ void Preview()
 	case PREV_BMP_LOAD:
 
 		// prepare address in video memory
-#if COLBITS == 4
-		dst = &FrameBuf[PrevLine*WIDTHLEN + WIDTH/4];
-#else
-		dst = &FrameBuf[PrevLine*WIDTH + WIDTH/2];
-#endif
+		current_fb_line = PrevLine+PrevRow;
+		if(reversed) {
+			current_fb_line = PrevLine+PrevH-PrevRow;
+		}
+		dst = &FrameBuf[current_fb_line*WIDTH + BITMAP_OFFSET];
 
 		// prepare size of data to read from one line
-		i = (PrevW > (WIDTH/2)) ? (WIDTH/2) : PrevW;
+		i = (PrevW > (SCREEN_WIDTH/2)) ? (SCREEN_WIDTH/2) : PrevW;
 
 		// read one video line
 		FileRead(&PrevFile, dst, (i*COLBITS+7)/8);
-		DispDirtyRect(WIDTH/2, PrevLine, WIDTH/2, 1);
+		DispDirtyRect(BITMAP_OFFSET, current_fb_line, SCREEN_WIDTH/2, 1);
 
 		// skip rest of line
-		if (PrevW > (WIDTH/2)) FileSeek(&PrevFile, FilePos(&PrevFile) + (PrevW - (WIDTH/2))*COLBITS/8);
+		if (PrevW > (SCREEN_WIDTH/2)) FileSeek(&PrevFile, FilePos(&PrevFile) + (PrevW - (SCREEN_WIDTH/2))*COLBITS/8);
 
-		// increase line
-		PrevLine++;
-		PrevH--;
+		// increase the processed row
+		PrevRow++;
 
 		// end of image
-		if ((PrevLine >= HEIGHT) || (PrevH <= 0))
+		if ((PrevLine >= HEIGHT) || (PrevRow >= PrevH))
 		{
 			// close preview file
 			FileClose(&PrevFile);
@@ -1413,7 +1420,7 @@ int main()
 		LoadBootData();
 
 		// display info text
-		DispInfo("Loading files...");
+		DispInfo("Loading files");
 
 		// load files
 		Remount = False; // clear flag - disk already remounted
@@ -1465,7 +1472,7 @@ int main()
 					PreviewClr();
 
 					// display info text
-					DispInfo("Loading files...");
+					DispInfo("Loading files");
 
 					// load files
 					Remount = False; // clear flag - disk already remounted

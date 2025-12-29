@@ -22,8 +22,12 @@
 // to change from the default configuration in config_def.h.
 // *********
 
-#define WIDTH		320		// screen width
-#define HEIGHT		240		// screen height
+
+#define WIDTH		        320		// display framebuffer width
+#define SCREEN_WIDTH		280		// display physical pixels width
+#define HEIGHT		        240		// display framebuffer height
+#define SCREEN_HEIGHT		240		// display physical pixels height
+
 
 #define USE_FATALERROR	0		// use fatal error message 0=no, 1=display LCD message (sdk_fatal.c, sdk_fatal.h)
 

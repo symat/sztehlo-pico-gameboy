@@ -16,7 +16,6 @@
 
 #include "../../global.h"	// globals
 
-#if USE_PICOPAD
 
 #include "../../_display/st7789/st7789.h"
 #include "../../_sdk/inc/sdk_timer.h"
@@ -37,20 +36,20 @@ sFile ScreenShotFile; // screen shot file
 const sBmp BmpHeader = {
 	// BMP file header (size 14 bytes)
 	0x4D42,			// u16	bfType;		// 0x00: magic, 'B' 'M' = 0x4D42
-	70 + WIDTH*HEIGHT*2 + 2, // u32	bfSize;		// 0x02: file size, aligned to DWORD = 70 + 320*240*2 + 2 = 153672 = 0x25848
+	70 + SCREEN_WIDTH*SCREEN_HEIGHT*2, // u32	bfSize;		// 0x02: file size, aligned to DWORD: 70 + 280*240*2 = 134470 = 46 0D 02 00 little endian
 	0,			// u16	bfReserved1;	// 0x06: = 0
 	0,			// u16	bfReserved2;	// 0x08: = 0
 	70,			// 0x0A: offset of data bits after file header = 70 (0x46)
 	// BMP info header (size 40 bytes)
 	56,			// u32	biSize;		// 0x0E: size of this info header = 56 (0x38)
-	WIDTH,			// s32	biWidth;	// 0x12: width = 320 (0x140)
-	-HEIGHT,		// s32	biHeight;	// 0x16: height, negate if flip row order = -240 (0xFFFFFF10)
+	SCREEN_WIDTH,			// s32	biWidth;	// 0x12: width: 280 (0x118): 18 01 00 00
+	-SCREEN_HEIGHT,		// s32	biHeight;	// 0x16: height, negate if flip row order = -240 (0xFFFFFF10)
 	1,			// u16	biPlanes;	// 0x1A: planes = 1
 	16,			// u16	biBitCount;	// 0x1C: number of bits per pixel = 16
 	3,			// u32	biCompression;	// 0x1E: compression = 3 (BI_BITFIELDS)
-	WIDTH*HEIGHT*2+2,	// u32	biSizeImage;	// 0x22: size of data of image + aligned file = 320*240*2 + 2 = 153602 (0x25802)
-	2834,			// s32	biXPelsPerMeter; // 0x26: X pels per meter = 2834 (= 0xB12)
-	2834,			// s32	biYPelsPerMeter; // 0x2A: Y pels per meter = 2834 (= 0xB12)
+	SCREEN_WIDTH*SCREEN_HEIGHT*2,	// u32	biSizeImage;	// 0x22: size of data of image (each row aligned to 32bit DWORD) = 280*240*2 = 134 400 (0x20D00) = 00 0D 02 00 little endian
+	2834,			// s32	biXPelsPerMeter; // 0x26: X pixels per meter = 2834, 72ppi (= 0xB12): 12 0B 00 00 little endian
+	2834,			// s32	biYPelsPerMeter; // 0x2A: Y pixels per meter = 2834, 72ppi (= 0xB12): 12 0B 00 00 little endian
 	0,			// u32	biClrUsed;	// 0x2E: number of user colors (0 = all)
 	0,			// u32	biClrImportant;	// 0x32: number of important colors (0 = all)
 	// BMP color bit mask (size 16 bytes)
@@ -65,20 +64,20 @@ const sBmp BmpHeader = {
 const sBmp SmallBmpHeader = {
 	// BMP file header (size 14 bytes)
 	0x4D42,			// u16	bfType;		// 0x00: magic, 'B' 'M' = 0x4D42
-	70 + WIDTH/2*HEIGHT/2*2 + 2, // u32	bfSize;		// 0x02: file size, aligned to DWORD = 70 + 160*120*2 + 2 = 38472 = 0x9648
+	70 + (SCREEN_WIDTH/2)*(SCREEN_HEIGHT/2)*2, // u32	bfSize;		// 0x02: file size, aligned to DWORD = 70 + 140*120*2 = 33670 = 0x8386 = 86 83 00 00 little endian
 	0,			// u16	bfReserved1;	// 0x06: = 0
 	0,			// u16	bfReserved2;	// 0x08: = 0
 	70,			// 0x0A: offset of data bits after file header = 70 (0x46)
 	// BMP info header (size 40 bytes)
 	56,			// u32	biSize;		// 0x0E: size of this info header = 56 (0x38)
-	WIDTH/2,		// s32	biWidth;	// 0x12: width = 160 (0x0A0)
-	-HEIGHT/2,		// s32	biHeight;	// 0x16: height, negate if flip row order = -120 (0xFFFFFF88)
+	SCREEN_WIDTH/2,		// s32	biWidth;	// 0x12: width = 140 (0x8C)
+	-SCREEN_HEIGHT/2,		// s32	biHeight;	// 0x16: height, negate if flip row order = -120 (0xFFFFFF88)
 	1,			// u16	biPlanes;	// 0x1A: planes = 1
 	16,			// u16	biBitCount;	// 0x1C: number of bits per pixel = 16
 	3,			// u32	biCompression;	// 0x1E: compression = 3 (BI_BITFIELDS)
-	WIDTH/2*HEIGHT/2*2+2,	// u32	biSizeImage;	// 0x22: size of data of image + aligned file = 160*120*2 + 2 = 38402 (0x9602)
-	2834,			// s32	biXPelsPerMeter; // 0x26: X pels per meter = 2834 (= 0xB12)
-	2834,			// s32	biYPelsPerMeter; // 0x2A: Y pels per meter = 2834 (= 0xB12)
+	(SCREEN_WIDTH/2)*(SCREEN_HEIGHT/2)*2,	// u32	biSizeImage;	// 0x22: size of data of image + aligned file = 180*120*2 + 2 = 33600 (0x8340)
+	2834,			// s32	biXPelsPerMeter; // 0x26: X pixels per meter = 2834, 72ppi (= 0xB12): 12 0B 00 00 little endian
+	2834,			// s32	biYPelsPerMeter; // 0x2A: Y pixels per meter = 2834, 72ppi (= 0xB12): 12 0B 00 00 little endian
 	0,			// u32	biClrUsed;	// 0x2E: number of user colors (0 = all)
 	0,			// u32	biClrImportant;	// 0x32: number of important colors (0 = all)
 	// BMP color bit mask (size 16 bytes)
@@ -180,11 +179,21 @@ void CloseScreenShot()
 // Do one screen shot (generates file SCRxxxxx.BMP in root of SD card)
 void ScreenShot()
 {
+	u16* s;
 	// open screen shot
 	if (OpenScreenShot())
 	{
-		// write image data
-		WriteScreenShot(FrameBuf, WIDTH*HEIGHT*2+2);
+		// write image data (focusing on the middle of the framebuffer, to a screen_width x screen_height area)
+		s = FrameBuf;
+		int height_offset = (int)((HEIGHT-SCREEN_HEIGHT)/2);
+		int width_offset = (int)((WIDTH-SCREEN_WIDTH)/2);
+		s += height_offset * WIDTH;
+		for (int i = 0; i < SCREEN_HEIGHT; i++)
+		{
+			s += width_offset;
+			WriteScreenShot(s, SCREEN_WIDTH*2);
+			s += width_offset + SCREEN_WIDTH;
+		}
 
 		// close screenshot
 		CloseScreenShot();
@@ -197,7 +206,7 @@ void SmallScreenShot()
 	int i, j;
 	char fn[] = "/SCR00001.BMP";
 	sFile file;
-	u16 buf[WIDTH/2];
+	u16 buf[SCREEN_WIDTH/2];
 	u16* s;
 
 	// mounted flag
@@ -223,22 +232,26 @@ void SmallScreenShot()
 		{
 			// write BMP file header
 			FileWrite(&file, &SmallBmpHeader, sizeof(sBmp));
-
-			// write image data
+			// write image data (focusing on the middle of the framebuffer, to a screen_widthxscreen_height area)
 			s = FrameBuf;
-			for (i = HEIGHT/2; i > 0; i--)
+			int height_offset = (int)((HEIGHT-SCREEN_HEIGHT)/2);
+			int width_offset = (int)((WIDTH-SCREEN_WIDTH)/2);
+			s+=height_offset*WIDTH;
+			for (i = SCREEN_HEIGHT/2; i > 0; i--)
 			{
-				for (j = 0; j < WIDTH/2; j++)
+				s += width_offset;
+				for (j = 0; j <SCREEN_WIDTH/2; j++)
 				{
 					buf[j] = RGBBLEND4(s[0], s[1], s[WIDTH], s[WIDTH+1]);
 					s += 2;
 				}
+				s += width_offset;
 				s += WIDTH;
-				FileWrite(&file, buf, WIDTH/2*2);
+				FileWrite(&file, buf, SCREEN_WIDTH/2*2);
 			}
 
 			// write align
-			FileWrite(&file, buf, 2);
+			//FileWrite(&file, buf, 2);
 
 			// close file
 			FileClose(&file);
@@ -254,4 +267,4 @@ void SmallScreenShot()
 
 #endif // USE_SCREENSHOT || USE_EMUSCREENSHOT	// use screen shots
 
-#endif // USE_PICOPAD
+

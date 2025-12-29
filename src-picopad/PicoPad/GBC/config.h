@@ -100,7 +100,7 @@
 //#define USE_ORIGSDK		1		// include interface of original-SDK
 //#define EMU_DEBUG_SYNC	1		// 1 = debug measure time synchronization
 //#define USE_SCREENSHOT	1		// use screen shots
-#define USE_EMUSCREENSHOT	1		// use emulator screen shots
+//#define USE_EMUSCREENSHOT	1		// use emulator screen shots
 //#define USE_USBPAD		1		// simulate keypad with USB keyboard
 //#define USE_FILESEL		1		// use file selection (lib_filesel.c, lib_filesel.h)
 //#define SYSTICK_MS		1		// increment of system time in [ms] on SysTick interrupt (default 5)

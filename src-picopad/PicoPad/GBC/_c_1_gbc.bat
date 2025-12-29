@@ -10,6 +10,11 @@ call _c.bat
 copy /b GBC.uf2 samples\%1.UF2
 if not exist samples\%1.BMP copy GBC.BMP samples\%1.BMP
 if not exist samples\%1.PNG copy GBC.PNG samples\%1.PNG
+
+if not exist ..\..\%DEVDIR%\GBC\*.UF2 md ..\..\%DEVDIR%\GBC
+copy /b samples\%1.* ..\..\%DEVDIR%\GBC\ > nul
+
+
 goto stop
 :err
 pause

@@ -785,13 +785,16 @@ void FASTCODE NOFLASH(core1DrawFrame)()
 	// do screenshot
 	y = gbContext.frame_rline;
 	dmb();
-	if (DoEmuScreenShotReq && (y == 0))
+
+#if USE_SCREENSHOT		// use screen shots
+	int width_offset = (int)((WIDTH-SCREEN_WIDTH)/2);
+	if (screenShotReq && (y == 0))
 	{
-		DoEmuScreenShot = True;	// request to do emulator screenshot
-		dmb();
-		DoEmuScreenShotReq = False;
-		dmb();
+		OpenScreenShot();
+		screenShotInProgress = True;
+		screenShotReq = False;
 	}
+#endif
 
 	// start sending image data
 	DispStartImg(0, WIDTH, y, HEIGHT);
@@ -847,10 +850,28 @@ void FASTCODE NOFLASH(core1DrawFrame)()
 			for(x = 320; x>0; x--) DispSendImg2(black);
 		}
 
-
-		// next source Y
-		// Check case: y = 239, old ys = 239*144/240 = 143, new ys2 = 240*144/240 = 144, it is OK
-		y++;
+#if USE_SCREENSHOT		// use screen shots
+		if(ScreenShotIsOpen && screenShotInProgress) {
+			u16 screenShotBuf[SCREEN_WIDTH];
+			s = &gbContext.framebuf[rinx*LCD_WIDTH]; // source address
+			if(y>=12 && y<228) {
+				for(x = 0; x<20; x++) screenShotBuf[x]=0x0;
+				for (; x < LCD_WIDTH*1.5 + 20; x++)
+				{
+					c = *s++;
+					screenShotBuf[x]=c;
+					if(x%2) {
+						x++;
+						screenShotBuf[x]=c;
+					}
+				}
+				for(; x<SCREEN_WIDTH; x++) screenShotBuf[x]=0x0;
+			} else {
+				for(x = 0; x<SCREEN_WIDTH; x++) screenShotBuf[x]=0x0;
+			}
+			FileWrite(&ScreenShotFile, screenShotBuf, SCREEN_WIDTH*2);
+		}
+#endif
 
 		// update read index - only if we will not need this scan line again
 		if(y>=12 && y<228 && y%3!=0) 
@@ -864,10 +885,24 @@ void FASTCODE NOFLASH(core1DrawFrame)()
 			dmb();
 		}
 
+		// next source Y
+		// Check case: y = 239, old ys = 239*144/240 = 143, new ys2 = 240*144/240 = 144, it is OK
+		y++;
+
 		// increase Y
 		rinx = gbContext.frame_rline + 1; // increase absolute line
 		if (rinx >= HEIGHT) rinx = 0; // wrap current line
 		gbContext.frame_rline = rinx;
+
+#if USE_SCREENSHOT		// use screen shots
+		if (screenShotInProgress && (rinx == 0))
+		{
+			CloseScreenShot();
+			screenShotReq = False;
+			screenShotInProgress = False;
+			gbContext.gb_pause = 0;
+		}
+#endif
 
 		// slow down FPS to speed up emulation
 		u32 del = DelayLineUs;
@@ -1204,7 +1239,10 @@ int main()
 
 	// display mode
 	GB_DispMode = GB_DISPMODE_EMU;
-	DoEmuScreenShot = False;	// request to do emulator screenshot
+#if USE_SCREENSHOT		// use screen shots
+	screenShotReq = False;
+	screenShotInProgress = False;
+#endif
 	FileInit(&GB_ROMFile);
 
 	// setup
@@ -1216,6 +1254,10 @@ int main()
 	while (True)
 	{
 		// run one frame
+#if USE_SCREENSHOT		// use screen shots
+		if(screenShotReq && !gbContext.gb_pause)
+			gbContext.gb_pause = 1;
+#endif			
 		gb_run_frame(&gbContext);
 
 		// auto speed FPS
