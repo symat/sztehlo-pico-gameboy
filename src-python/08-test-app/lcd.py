@@ -31,8 +31,10 @@ WHITE = const(0xFFFF)
 class ST7789(framebuf.FrameBuffer):
     def __init__(
         self,
-        width=320,
-        height=240,
+        screen_width=280,   # this is the actual width of the screen (positioned to the middle of the framebuffer)
+        screen_height=240,
+        fb_width=320,       # this is the framebuffer width used in the background
+        fb_height=240,
         spi=0,
         sck=2,
         mosi=3,
@@ -63,12 +65,14 @@ class ST7789(framebuf.FrameBuffer):
         self.bl_level = bl_level
         self.cs = Pin(cs, Pin.OUT)
         self.dc = Pin(dc, Pin.OUT)
-        self.width = width
-        self.height = height
+        self.width = fb_width
+        self.height = fb_height
+        self.offset_x = int((fb_width - screen_width) / 2)
+        self.offset_y = int((fb_height - screen_height) / 2)
         self.bl = bl
         self.reset = Pin(reset, Pin.OUT)
         self.buffer = bytearray(
-            width * height * 2
+            fb_width * fb_height * 2
         )  # 2 bytes needed for every pixel (RGB565 format)
         super().__init__(self.buffer, self.width, self.height, framebuf.RGB565)
         self.fill(init_color)
@@ -101,11 +105,17 @@ class ST7789(framebuf.FrameBuffer):
         # y_max = self.height - 1
         # self.write_reg(0x2A, [0, 0, x_max >> 8, x_max & 0xFF])
         # self.write_reg(0x2B, [0, 0, y_max >> 8, y_max & 0xFF])
+        
+        _rowstart = 0
+        _rowend = self.height
+        _colstart = 0
+        _colend = self.width
+        
         self.write_reg(
-            0x2A, [0, 0, self.width >> 8, self.width & 0xFF]
+            0x2A, [_colstart >> 8, _colstart & 0xFF, _colend >> 8, _colend & 0xFF]
         )  # CASET: column addresses
         self.write_reg(
-            0x2B, [0, 0, self.height >> 8, self.height & 0xFF]
+            0x2B, [_rowstart >> 8, _rowstart & 0xFF, _rowend >> 8, _rowend & 0xFF]
         )  # RASET: row addresses
 
         self.write_cmd(0x21)  # Inversion on: 0x21, Inversion off: 0x20
@@ -219,4 +229,31 @@ class ST7789(framebuf.FrameBuffer):
         self.bl_pwm.deinit()
         if self.spi != None:
             self.spi.deinit()
+                        
+    def pixel(self, x, y, c=None):
+        return super().pixel(x + self.offset_x, y + self.offset_y, c)
+
+    def hline(self, x, y, w, c):
+        super().hline(x + self.offset_x, y + self.offset_y, w, c)
+
+    def vline(self, x, y, h, c):
+        super().hline(x + self.offset_x, y + self.offset_y, h, c)
+
+    def line(self, x1, y1, x2, y2, c):
+        super().line(x1 + self.offset_x, y1 + self.offset_y, x2 + self.offset_x, y2 + self.offset_y, c)
+
+    def rect(self, x, y, w, h, c, f=False):
+        super().rect(x + self.offset_x, y + self.offset_y, w, h, c, f)
+
+    def ellipse(self, x, y, xr, yr, c, f=False, m=0x0f):
+        super().ellipse(x + self.offset_x, y + self.offset_y, xr, yr, c, f, m)
+
+    def text(self, s, x, y, c=WHITE):
+        super().text(s, x + self.offset_x, y + self.offset_y, c)
+
+    def poly(self, x, y, coords, c, f=False):
+        super().poly(x + self.offset_x, y + self.offset_y, coords, c, f)
+
+    def blit(self, fbuf, x, y, key=-1, palette=None):
+        super().blit(fbuf, x + self.offset_x, y + self.offset_y, key, palette)
 

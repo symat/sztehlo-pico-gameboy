@@ -6,8 +6,7 @@ sound_pwm = PWM(Pin(0), freq=262, duty_u16=0)
 
 # max should be 32.000, but that might be too much
 volume_values = (0, 100, 200, 500, 1000, 2000, 5000, 10000, 15000, 20000, 25000)
-sound_volume_idx = 1   #  0 ... 10
-
+sound_volume_idx = 0   #  the user can select between 11 volume levels: 0 ... 10
 
 NOTE_B0  =  31
 NOTE_C1  =  33
@@ -246,7 +245,7 @@ def pause_music():
     sound_pwm.duty_u16(0)
     
 def get_volume():
-    return sound_volume_idx  # 0...8
+    return sound_volume_idx  # 0...10
 
 def set_volume(vol_idx):
     global sound_volume_idx
