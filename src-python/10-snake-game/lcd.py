@@ -54,7 +54,7 @@ class ST7789(framebuf.FrameBuffer):
         # SPI baudrate can not be higher than the half of the machine frequency (62.5MHz)
         # for higher stability we can decrease it later if needed to 50 or 30 MHz...
         self.spi = SPI(
-            spi, 40_000_000, sck=Pin(sck), mosi=Pin(mosi), polarity=1, phase=1
+            spi, 62_500_000, sck=Pin(sck), mosi=Pin(mosi), polarity=1, phase=1
         )
 
         # BACKLIGHT_FREQ:   22050 [Hz] (use the same frequency as the audio output,
