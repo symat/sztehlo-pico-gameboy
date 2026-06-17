@@ -1,4 +1,4 @@
-#ifndef __SZTEHLO_DISPLAY__
+#ifndef __HAMSTER_DISPLAY__
 
 int getOne();
 

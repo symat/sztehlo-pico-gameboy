@@ -1,0 +1,1 @@
+An empty application, running only the shell of the OS

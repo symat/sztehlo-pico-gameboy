@@ -18,7 +18,8 @@ pico_enable_stdio_usb(shell 1)
 # Add the standard library to the build
 target_link_libraries(shell
         pico_stdlib
-        sztehlo-libs)
+        hamster-libs
+        hamster-os)
 
 # Add the standard include files to the build
 #target_include_directories(shell PUBLIC
@@ -30,6 +31,6 @@ target_link_libraries(shell
 # create map/bin/hex file etc.
 pico_add_extra_outputs(shell)
 
-#target_link_options(shell 
-#    PRIVATE "LINKER:--print-memory-usage"
-#)
+target_link_options(shell 
+    PRIVATE "LINKER:--print-memory-usage"
+)
